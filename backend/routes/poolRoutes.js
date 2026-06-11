@@ -10,7 +10,8 @@ const {
   getAllPools,
   joinPool,
   leavePool,
-  getPoolMembers
+  getPoolMembers,
+  completePool
 } = require("../controllers/poolController");
 
 router.get("/", getAllPools);
@@ -33,5 +34,10 @@ router.post(
   "/leave/:id",
   authenticateToken,
   leavePool
+);
+router.post(
+  "/complete/:id",
+  authenticateToken,
+  completePool
 );
 module.exports = router;

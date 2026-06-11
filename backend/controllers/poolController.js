@@ -246,10 +246,77 @@ await pool.query(
   }
 };
 
+const completePool = async (req, res) => {
+  try {
+
+    const pool_id = req.params.id;
+
+    await pool.query(
+      `
+      UPDATE pools
+      SET completed = TRUE
+      WHERE pool_id = $1
+      `,
+      [pool_id]
+    );
+
+    const members = await pool.query(
+      `
+      SELECT user_id
+      FROM pool_members
+      WHERE pool_id = $1
+      `,
+      [pool_id]
+    );
+
+    for (const member of members.rows) {
+
+      await pool.query(
+        `
+        UPDATE users
+        SET trust_score = trust_score + 5
+        WHERE user_id = $1
+        `,
+        [member.user_id]
+      );
+
+      await pool.query(
+        `
+        INSERT INTO trust_events
+        (
+          user_id,
+          action,
+          score_change
+        )
+        VALUES ($1,$2,$3)
+        `,
+        [
+          member.user_id,
+          'complete_pool',
+          5
+        ]
+      );
+    }
+
+    res.status(200).json({
+      message: "Pool completed successfully"
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to complete pool"
+    });
+  }
+};
+
 module.exports = {
   createPool,
   getAllPools,
   joinPool,
   leavePool,
-  getPoolMembers
+  getPoolMembers,
+  completePool
 };
