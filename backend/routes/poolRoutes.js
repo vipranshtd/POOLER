@@ -9,6 +9,7 @@ const {
   createPool,
   getAllPools,
   joinPool,
+  leavePool,
   getPoolMembers
 } = require("../controllers/poolController");
 
@@ -28,5 +29,9 @@ router.post(
   authenticateToken,
   joinPool
 );
-
+router.post(
+  "/leave/:id",
+  authenticateToken,
+  leavePool
+);
 module.exports = router;

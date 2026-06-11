@@ -3,6 +3,7 @@ const express = require("express");
 const authRoutes = require("../routes/authRoutes");
 const poolRoutes = require("../routes/poolRoutes");
 const messageRoutes = require("../routes/messageRoutes");
+const userRoutes = require("../routes/userRoutes");
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/pools", poolRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("POOLER Backend Running 🚀");

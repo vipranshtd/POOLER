@@ -34,6 +34,15 @@ const createPool = async (req, res) => {
       ]
     );
 
+    await pool.query(
+  `
+  UPDATE users
+  SET trust_score = trust_score + 2
+  WHERE user_id = $1
+  `,
+  [creator_id]
+);
+
     res.status(201).json({
       message: "Pool created successfully",
       pool: result.rows[0]
@@ -88,6 +97,14 @@ const joinPool = async (req, res) => {
       `,
       [pool_id, user_id]
     );
+    await pool.query(
+      `
+      UPDATE users
+      SET trust_score = trust_score + 1
+      WHERE user_id = $1
+      `,
+      [user_id]
+    );
 
     res.status(201).json({
       message: "Joined pool successfully",
@@ -135,9 +152,54 @@ const getPoolMembers = async (req, res) => {
   }
 };
 
+const leavePool = async (req, res) => {
+  try {
+
+    const pool_id = req.params.id;
+
+    const user_id = req.user.userId;
+
+    const result = await pool.query(
+      `
+      DELETE FROM pool_members
+      WHERE pool_id = $1
+      AND user_id = $2
+      RETURNING *
+      `,
+      [pool_id, user_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "Membership not found"
+      });
+    }
+    await pool.query(
+     `
+     UPDATE users
+     SET trust_score = trust_score - 5
+     WHERE user_id = $1
+     `,
+    [user_id]
+);
+    res.status(200).json({
+      message: "Left pool successfully"
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to leave pool"
+    });
+  }
+};
+
 module.exports = {
   createPool,
   getAllPools,
   joinPool,
+  leavePool,
   getPoolMembers
 };
