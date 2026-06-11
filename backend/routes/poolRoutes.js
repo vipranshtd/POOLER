@@ -8,7 +8,8 @@ require("../middleware/authMiddleware");
 const {
   createPool,
   getAllPools,
-  joinPool
+  joinPool,
+  getPoolMembers
 } = require("../controllers/poolController");
 
 router.get("/", getAllPools);
@@ -18,9 +19,14 @@ router.post(
   authenticateToken,
   createPool
 );
+router.get(
+  "/:id/members",
+  getPoolMembers
+);
 router.post(
   "/join/:id",
   authenticateToken,
   joinPool
 );
+
 module.exports = router;

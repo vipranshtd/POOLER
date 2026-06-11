@@ -104,9 +104,40 @@ const joinPool = async (req, res) => {
   }
 };
 
+const getPoolMembers = async (req, res) => {
+  try {
+
+    const pool_id = req.params.id;
+
+    const result = await pool.query(
+      `
+      SELECT
+        users.user_id,
+        users.name,
+        users.email
+      FROM pool_members
+      JOIN users
+      ON pool_members.user_id = users.user_id
+      WHERE pool_members.pool_id = $1
+      `,
+      [pool_id]
+    );
+
+    res.status(200).json(result.rows);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to fetch members"
+    });
+  }
+};
 
 module.exports = {
   createPool,
   getAllPools,
-  joinPool
+  joinPool,
+  getPoolMembers
 };
