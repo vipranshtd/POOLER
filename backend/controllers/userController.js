@@ -31,6 +31,37 @@ const getProfile = async (req, res) => {
   }
 };
 
+const getTrustHistory = async (req, res) => {
+  try {
+
+    const userId = req.user.userId;
+
+    const result = await pool.query(
+      `
+      SELECT
+        action,
+        score_change,
+        created_at
+      FROM trust_events
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      `,
+      [userId]
+    );
+
+    res.status(200).json(result.rows);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to fetch trust history"
+    });
+  }
+};
+
 module.exports = {
-  getProfile
+  getProfile,
+  getTrustHistory
 };

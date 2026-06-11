@@ -6,13 +6,20 @@ const authenticateToken =
 require("../middleware/authMiddleware");
 
 const {
-  getProfile
+  getProfile,
+  getTrustHistory
 } = require("../controllers/userController");
 
 router.get(
   "/profile",
   authenticateToken,
   getProfile
+);
+
+router.get(
+  "/trust-history",
+  authenticateToken,
+  getTrustHistory
 );
 
 module.exports = router;

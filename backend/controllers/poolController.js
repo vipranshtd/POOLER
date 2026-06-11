@@ -42,7 +42,22 @@ const createPool = async (req, res) => {
   `,
   [creator_id]
 );
-
+await pool.query(
+  `
+  INSERT INTO trust_events
+  (
+    user_id,
+    action,
+    score_change
+  )
+  VALUES ($1,$2,$3)
+  `,
+  [
+    creator_id,
+    'create_pool',
+    2
+  ]
+);
     res.status(201).json({
       message: "Pool created successfully",
       pool: result.rows[0]
@@ -105,6 +120,23 @@ const joinPool = async (req, res) => {
       `,
       [user_id]
     );
+
+    await pool.query(
+  `
+  INSERT INTO trust_events
+  (
+    user_id,
+    action,
+    score_change
+  )
+  VALUES ($1,$2,$3)
+  `,
+  [
+    user_id,
+    'join_pool',
+    1
+  ]
+);
 
     res.status(201).json({
       message: "Joined pool successfully",
@@ -182,6 +214,24 @@ const leavePool = async (req, res) => {
      `,
     [user_id]
 );
+
+await pool.query(
+  `
+  INSERT INTO trust_events
+  (
+    user_id,
+    action,
+    score_change
+  )
+  VALUES ($1,$2,$3)
+  `,
+  [
+    user_id,
+    'leave_pool',
+    -5
+  ]
+);
+
     res.status(200).json({
       message: "Left pool successfully"
     });
