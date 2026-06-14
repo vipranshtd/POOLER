@@ -7,7 +7,8 @@ require("../middleware/authMiddleware");
 
 const {
   getProfile,
-  getTrustHistory
+  getTrustHistory,
+  getUserStats
 } = require("../controllers/userController");
 
 router.get(
@@ -20,6 +21,12 @@ router.get(
   "/trust-history",
   authenticateToken,
   getTrustHistory
+);
+
+router.get(
+  "/stats",
+  authenticateToken,
+  getUserStats
 );
 
 module.exports = router;
