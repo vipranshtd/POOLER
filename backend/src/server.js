@@ -5,6 +5,7 @@ const poolRoutes = require("../routes/poolRoutes");
 const messageRoutes = require("../routes/messageRoutes");
 const userRoutes = require("../routes/userRoutes");
 const ratingsRoutes = require("../routes/ratingsRoutes");
+const trustRoutes = require("../routes/trustRoutes");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use("/api/pools", poolRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/ratings", ratingsRoutes);
+app.use("/api/trust", trustRoutes);
 
 app.get("/", (req, res) => {
   res.send("POOLER Backend Running 🚀");
